@@ -160,7 +160,6 @@ header {
 
 main {
   flex: 1;
-  padding: 20px;
   width: 100%;
   box-sizing: border-box;
 }
@@ -209,10 +208,6 @@ main {
   .nav-menu li a.router-link-active {
     background-color: rgba(255, 255, 255, 0.2);
     font-weight: 600;
-  }
-
-  main {
-    padding: 30px 40px;
   }
 
   .brand {
