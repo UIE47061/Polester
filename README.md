@@ -1,5 +1,183 @@
-# Vue 3 + Vite
+# Polester
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+一個現代化的廣告投放管理系統，讓使用者可以輕鬆管理電線桿廣告的投放、審核與展示。
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+## ✨ 功能特色
+
+### 📝 廣告投放頁
+- 圖片上傳（支援最大 10MB）
+- 廣告敘述編輯
+- 時段選擇器（半小時為單位，7天範圍）
+- 投放桿數量設定
+- 即時預覽
+
+### 🔐 後台審核頁（需登入）
+- 密碼保護機制
+- 廣告列表管理
+- 圖片縮圖預覽
+- 曝光進度追蹤
+- 狀態管理（進行中/已暫停/已完成）
+- 暫停/恢復/刪除操作
+- 錯誤處理與重試功能
+
+### 📺 廣告呈現頁
+- 自動輪播展示有效廣告
+- 10秒自動切換
+- 每30秒自動刷新
+- 輪播控制按鈕
+- 響應式設計
+
+## 🛠️ 技術架構
+
+- **前端框架**: Vue 3 (Composition API)
+- **建置工具**: Vite
+- **路由**: Vue Router 4
+- **UI**: 原生 CSS（完整 RWD 響應式設計）
+- **後端 API**: FastAPI (https://uie47061-polester-backend.hf.space)
+- **部署**: GitHub Pages
+
+## 📱 響應式設計
+
+- **桌面版** (≥992px): 完整水平導航列，寬敞佈局
+- **平板版** (768-991px): 適中佈局，漢堡選單
+- **手機版** (<768px): 緊湊佈局，漢堡選單
+
+## 🚀 快速開始
+
+### 前置需求
+
+- Node.js >= 16.x
+- npm 或 pnpm
+
+### 安裝
+
+```bash
+# 安裝相依套件
+npm install
+```
+
+### 環境變數設定
+
+在專案根目錄建立 `.env` 檔案：
+
+```env
+VITE_ADMIN_PASSWORD=你的管理員密碼
+```
+
+### 開發模式
+
+```bash
+npm run dev
+```
+
+開啟瀏覽器訪問 `http://localhost:5173/Polester/`
+
+### 建置生產版本
+
+```bash
+npm run build
+```
+
+建置後的檔案會在 `dist/` 資料夾中。
+
+### 預覽生產版本
+
+```bash
+npm run preview
+```
+
+## 📂 專案結構
+
+```
+Polester/
+├── src/
+│   ├── assets/           # 靜態資源（圖片、樣式）
+│   ├── components/       # Vue 元件
+│   ├── composables/      # Composition API 邏輯
+│   │   ├── useAdStore.js    # 廣告資料管理
+│   │   └── useAuth.js       # 登入驗證
+│   ├── router/           # 路由設定
+│   ├── services/         # API 服務
+│   │   └── api.js           # 後端 API 封裝
+│   ├── views/            # 頁面元件
+│   │   ├── PlacementView.vue  # 廣告投放頁
+│   │   ├── AdminView.vue      # 後台審核頁
+│   │   └── DisplayView.vue    # 廣告呈現頁
+│   ├── App.vue           # 主應用元件
+│   └── main.js           # 應用入口
+├── .github/workflows/    # GitHub Actions CI/CD
+├── public/               # 公開靜態資源
+├── .env                  # 環境變數（不提交到 Git）
+├── index.html            # HTML 模板
+├── vite.config.js        # Vite 設定
+└── package.json          # 專案設定
+```
+
+## 🔌 API 端點
+
+基礎 URL: `https://uie47061-polester-backend.hf.space`
+
+### 廣告管理
+
+- `POST /advertisements/` - 建立新廣告
+- `GET /advertisements/` - 獲取廣告列表
+- `GET /advertisements/active` - 獲取有效廣告
+- `GET /advertisements/{id}` - 獲取單一廣告
+- `PATCH /advertisements/{id}` - 更新廣告
+- `DELETE /advertisements/{id}` - 刪除廣告
+- `POST /advertisements/{id}/impression` - 增加曝光次數
+
+## 🔒 安全性
+
+- 後台頁面採用密碼保護
+- 使用 sessionStorage 儲存登入狀態
+- 24小時自動登出機制
+- 密碼從環境變數讀取
+
+## 🚢 部署
+
+### GitHub Pages
+
+專案已設定 GitHub Actions 自動部署。每次推送到 `main` 分支時會自動建置並部署到 GitHub Pages。
+
+**設定步驟：**
+
+1. 在 GitHub repo Settings → Secrets and variables → Actions 中加入：
+   - `VITE_ADMIN_PASSWORD`: 管理員密碼
+
+2. 在 GitHub repo Settings → Pages 中：
+   - Source: GitHub Actions
+   - 確認部署成功
+
+3. 訪問網站：`https://uie47061.github.io/Polester/`
+
+## 🎨 自訂設定
+
+### 修改管理員密碼
+
+修改 `.env` 檔案中的 `VITE_ADMIN_PASSWORD` 值，然後重新啟動開發伺服器。
+
+### 修改主題顏色
+
+編輯 `src/assets/styles.css` 中的 CSS 變數：
+
+```css
+:root {
+    --primary-color: #094362;    /* 主要顏色 */
+    --secondary-color: #FFFFFF;  /* 次要顏色 */
+    --text-color: #333;          /* 文字顏色 */
+    --border-color: #ccc;        /* 邊框顏色 */
+    --success-color: #28a745;    /* 成功狀態顏色 */
+}
+```
+
+### 修改 base URL
+
+如果部署到不同的路徑，修改 `vite.config.js`：
+
+```javascript
+export default defineConfig({
+  base: '/your-repo-name/',  // 修改為你的 repo 名稱
+  plugins: [vue()],
+})
+```
