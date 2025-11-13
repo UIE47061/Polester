@@ -27,21 +27,6 @@
             </div>
           </div>
         </div>
-        
-        <!-- Carousel controls -->
-        <div v-if="activeAds.length > 1" class="carousel-controls">
-          <button @click="prevAd" class="carousel-btn">◀</button>
-          <div class="carousel-indicators">
-            <span 
-              v-for="(ad, index) in activeAds" 
-              :key="ad.id"
-              class="indicator"
-              :class="{ active: index === currentIndex }"
-              @click="goToAd(index)"
-            ></span>
-          </div>
-          <button @click="nextAd" class="carousel-btn">▶</button>
-        </div>
       </template>
       
       <div v-else class="no-ads">
@@ -113,15 +98,6 @@ async function refreshAds() {
 function nextAd() {
   if (activeAds.value.length === 0) return;
   currentIndex.value = (currentIndex.value + 1) % activeAds.value.length;
-}
-
-function prevAd() {
-  if (activeAds.value.length === 0) return;
-  currentIndex.value = (currentIndex.value - 1 + activeAds.value.length) % activeAds.value.length;
-}
-
-function goToAd(index) {
-  currentIndex.value = index;
 }
 
 function handleImageError(e) {
@@ -228,55 +204,6 @@ function handleImageError(e) {
   opacity: 0.9;
 }
 
-.carousel-controls {
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-  z-index: 3;
-}
-
-.carousel-btn {
-  background-color: rgba(9, 67, 98, 0.8);
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 1.3em;
-  transition: background-color 0.3s;
-}
-
-.carousel-btn:hover {
-  background-color: rgba(6, 49, 72, 0.9);
-}
-
-.carousel-indicators {
-  display: flex;
-  gap: 10px;
-}
-
-.indicator {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.5);
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.indicator.active {
-  background-color: white;
-}
-
-.indicator:hover {
-  background-color: rgba(255, 255, 255, 0.8);
-}
-
 .no-ads {
   flex: 1;
   display: flex;
@@ -297,50 +224,6 @@ function handleImageError(e) {
 }
 
 /* Bottom bar */
-.bottom-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: #094362;
-  color: white;
-  height: 80px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
-}
-
-.bottom-bar-content {
-  width: 100%;
-  max-width: 1400px;
-  padding: 0 30px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.bottom-text {
-  font-size: 1.2em;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-}
-
-.bottom-qrcode {
-  display: flex;
-  align-items: center;
-}
-
-.bottom-qrcode img {
-  height: 60px;
-  width: 60px;
-  background: white;
-  padding: 4px;
-  border-radius: 4px;
-}
-
-/* Tablet RWD */
 @media (min-width: 768px) and (max-width: 991px) {
   .ad-carousel {
     height: calc(100% - 70px);
@@ -353,10 +236,6 @@ function handleImageError(e) {
 
   .ad-description {
     font-size: 1.2em;
-  }
-
-  .carousel-controls {
-    bottom: 15px;
   }
 
   .bottom-bar {
@@ -390,25 +269,6 @@ function handleImageError(e) {
 
   .ad-meta {
     font-size: 0.85em;
-  }
-
-  .carousel-controls {
-    bottom: 10px;
-    gap: 15px;
-  }
-
-  .carousel-btn {
-    padding: 8px 16px;
-    font-size: 1em;
-  }
-
-  .carousel-indicators {
-    gap: 8px;
-  }
-
-  .indicator {
-    width: 10px;
-    height: 10px;
   }
 
   .bottom-bar {

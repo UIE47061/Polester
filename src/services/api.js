@@ -125,6 +125,35 @@ class ApiService {
       method: 'DELETE',
     });
   }
+
+  /**
+   * 使用 AI 生成圖片
+   * @param {string} prompt - 圖片描述提示詞
+   * @param {string} model - 使用的模型 (flux-schnell, sdxl, sd-1.5)
+   * @param {string} negativePrompt - 負面提示詞（可選）
+   * @returns {Promise<Object>}
+   */
+  async generateImage({ prompt, model = 'flux-schnell', negativePrompt = null }) {
+    return await this.request('/advertisements/generate-image', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        prompt,
+        model,
+        negative_prompt: negativePrompt,
+      }),
+    });
+  }
+
+  /**
+   * 獲取可用的 AI 圖片生成模型
+   * @returns {Promise<Object>}
+   */
+  async getAvailableModels() {
+    return await this.request('/advertisements/models');
+  }
 }
 
 // 導出單例

@@ -1,5 +1,12 @@
 <template>
   <div class="placement-view">
+    <!-- Toast Notification -->
+    <transition name="toast-fade">
+      <div v-if="toast.show" :class="['toast-notification', toast.type]">
+        {{ toast.message }}
+      </div>
+    </transition>
+
     <h2>廣告投放頁</h2>
     
     <!-- Loading indicator -->
@@ -138,6 +145,25 @@ const imageFile = ref(null);
 const submissionMessage = ref('');
 const messageType = ref('success');
 
+// Toast notification system
+const toast = ref({
+  show: false,
+  message: '',
+  type: 'success' // 'success', 'error', 'warning', 'info'
+});
+
+function showToast(message, type = 'success', duration = 3000) {
+  toast.value = {
+    show: true,
+    message,
+    type
+  };
+  
+  setTimeout(() => {
+    toast.value.show = false;
+  }, duration);
+}
+
 // Generate time options (7 days, 30-min intervals)
 function generateHalfHourOptions(days = 7) {
   const options = [];
@@ -177,7 +203,7 @@ function handleImageUpload(e) {
     
     // Validate file size (max 10MB)
     if (file.size > 10 * 1024 * 1024) {
-      alert('圖片大小不能超過 10MB');
+      showToast('圖片大小不能超過 10MB', 'error');
       e.target.value = '';
       return;
     }
@@ -195,52 +221,75 @@ function handleImageUpload(e) {
 // AI Generate handler (placeholder for API integration)
 async function handleAIGenerate() {
   if (!aiPrompt.value.trim()) {
-    alert('請輸入圖片描述');
+    showToast('請輸入圖片描述', 'warning');
     return;
   }
 
   aiGenerating.value = true;
+  showToast('正在生成圖片，請稍候...', 'info', 5000);
   
   try {
-    // TODO: 串接 AI 產圖 API
-    // const response = await fetch('YOUR_AI_API_ENDPOINT', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({ prompt: aiPrompt.value })
-    // });
-    // const data = await response.json();
-    // const imageUrl = data.imageUrl;
+    // 呼叫 AI 產圖 API
+    const response = await fetch('https://uie47061-polester-backend.hf.space/advertisements/generate-image', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        prompt: aiPrompt.value,
+        model: 'flux-schnell' // 使用推薦的快速模型
+      })
+    });
     
-    // 暫時使用佔位圖片模擬
-    alert('AI 產圖功能即將推出！\n您的描述：' + aiPrompt.value);
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.detail || 'AI 產圖失敗');
+    }
     
-    // 模擬生成延遲
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    const data = await response.json();
     
-    // 這裡之後要改成從 API 取得的圖片
-    // previewUrl.value = imageUrl;
-    // 需要將 URL 轉換為 File 物件
-    // imageFile.value = await urlToFile(imageUrl, 'ai-generated.png');
-    
+    if (data.success && data.data.image_base64) {
+      // 顯示預覽圖片
+      previewUrl.value = `data:image/png;base64,${data.data.image_base64}`;
+      
+      // 將 base64 轉換為 File 物件
+      imageFile.value = await base64ToFile(
+        data.data.image_base64, 
+        'ai-generated.png'
+      );
+      
+      showToast('圖片生成成功！', 'success');
+    } else {
+      throw new Error('無法取得生成的圖片');
+    }
+
   } catch (error) {
     console.error('AI 產圖失敗:', error);
-    alert('AI 產圖失敗，請稍後再試');
+    showToast('AI 產圖失敗：' + error.message, 'error', 4000);
   } finally {
     aiGenerating.value = false;
   }
 }
 
-// Helper function to convert URL to File (for future use)
-async function urlToFile(url, filename) {
-  const response = await fetch(url);
-  const blob = await response.blob();
-  return new File([blob], filename, { type: blob.type });
+// Helper function to convert base64 to File
+async function base64ToFile(base64String, filename) {
+  // 移除 data URL 前綴（如果有）
+  const base64Data = base64String.replace(/^data:image\/\w+;base64,/, '');
+  
+  // 將 base64 轉換為 binary
+  const binaryString = atob(base64Data);
+  const bytes = new Uint8Array(binaryString.length);
+  for (let i = 0; i < binaryString.length; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  
+  // 建立 Blob 和 File
+  const blob = new Blob([bytes], { type: 'image/png' });
+  return new File([blob], filename, { type: 'image/png' });
 }
 
 // Form submission
 async function handleSubmit() {
   if (!timeStart.value || !timeEnd.value) {
-    alert('請選擇開始與結束時間。');
+    showToast('請選擇開始與結束時間', 'warning');
     return;
   }
   
@@ -249,15 +298,15 @@ async function handleSubmit() {
   const endDate = new Date(timeEnd.value);
   
   if (endDate <= startDate) {
-    alert('結束時間必須晚於開始時間。');
+    showToast('結束時間必須晚於開始時間', 'warning');
     return;
   }
   
   if (!imageFile.value) {
     if (imageSource.value === 'upload') {
-      alert('請上傳圖片。');
+      showToast('請上傳圖片', 'warning');
     } else {
-      alert('請先使用 AI 生成圖片。');
+      showToast('請先使用 AI 生成圖片', 'warning');
     }
     return;
   }
@@ -480,6 +529,84 @@ button[type="submit"]:disabled {
   background-color: #f8d7da;
   color: #721c24;
   border: 1px solid #f5c6cb;
+}
+
+/* Toast Notification */
+.toast-notification {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  padding: 15px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 9999;
+  max-width: 350px;
+  word-wrap: break-word;
+}
+
+.toast-notification.success {
+  background-color: #d4edda;
+  color: #155724;
+  border-left: 4px solid #28a745;
+}
+
+.toast-notification.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border-left: 4px solid #dc3545;
+}
+
+.toast-notification.warning {
+  background-color: #fff3cd;
+  color: #856404;
+  border-left: 4px solid #ffc107;
+}
+
+.toast-notification.info {
+  background-color: #d1ecf1;
+  color: #0c5460;
+  border-left: 4px solid #17a2b8;
+}
+
+.toast-fade-enter-active {
+  animation: toast-slide-in 0.3s ease-out;
+}
+
+.toast-fade-leave-active {
+  animation: toast-slide-out 0.3s ease-in;
+}
+
+@keyframes toast-slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes toast-slide-out {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+/* Mobile Toast */
+@media (max-width: 767px) {
+  .toast-notification {
+    right: 10px;
+    left: 10px;
+    top: 70px;
+    max-width: none;
+  }
 }
 
 /* Tablet RWD */
