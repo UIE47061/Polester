@@ -226,10 +226,6 @@ main {
     padding: 12px 30px;
   }
 
-  main {
-    padding: 25px 30px;
-  }
-
   .brand {
     font-size: 1.3em;
   }
