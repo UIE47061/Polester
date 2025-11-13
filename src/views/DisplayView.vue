@@ -224,6 +224,50 @@ function handleImageError(e) {
 }
 
 /* Bottom bar */
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #094362;
+  color: white;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.bottom-bar-content {
+  width: 100%;
+  max-width: 1400px;
+  padding: 0 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.bottom-text {
+  font-size: 1.2em;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.bottom-qrcode {
+  display: flex;
+  align-items: center;
+}
+
+.bottom-qrcode img {
+  height: 60px;
+  width: 60px;
+  background: white;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+/* Tablet RWD */
 @media (min-width: 768px) and (max-width: 991px) {
   .ad-carousel {
     height: calc(100% - 70px);
