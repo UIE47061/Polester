@@ -204,7 +204,7 @@ async function handleSubmit() {
 
 <style scoped>
 .placement-view {
-  max-width: 800px;
+  max-width: 1200px;
   margin: 0 auto;
   width: 100%;
   padding: 0 15px;
@@ -245,7 +245,6 @@ button:disabled {
 /* Desktop RWD */
 @media (min-width: 992px) {
   .placement-view {
-    max-width: 900px;
     padding: 20px;
   }
 
