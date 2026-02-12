@@ -20,7 +20,7 @@ function closeMenu() {
     <header>
       <h1 class="brand">
         <img 
-          src="/src/assets/logo.png" 
+          src="/logo.png" 
           alt="Polester logo" 
           class="brand-logo"
         >

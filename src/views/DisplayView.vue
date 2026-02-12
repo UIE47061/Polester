@@ -42,7 +42,7 @@
           街頭個人化廣告投放 | 30分鐘只要150 | 打造你的街頭曝光時刻
         </div>
         <div class="bottom-qrcode">
-          <img src="../assets/qrcode.png" alt="QR Code" />
+          <img src="/qrcode.png" alt="QR Code" />
         </div>
       </div>
     </div>
